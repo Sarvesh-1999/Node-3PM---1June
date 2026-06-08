@@ -111,32 +111,49 @@ import fsp from "node:fs/promises";
 // });
 
 //! CREATE AND UPDATE
-let resp1 = fsp.writeFile("users.txt", "All users are :-");
+// let resp1 = fsp.writeFile("users.txt", "All users are :-");
 
-resp1.then(() => {
-  console.log("File Created");
+// resp1.then(() => {
+//   console.log("File Created");
 
-  let resp2 = fsp.appendFile("./users.txt", "\nJohn Doe");
+//   let resp2 = fsp.appendFile("./users.txt", "\nJohn Doe");
 
-  resp2.then(() => {
-    console.log("Update 1 Done");
+//   resp2.then(() => {
+//     console.log("Update 1 Done");
 
-    let resp3 = fsp.appendFile("./users.txt", "\nJane Doe");
+//     let resp3 = fsp.appendFile("./users.txt", "\nJane Doe");
 
-    resp3.then(() => {
-      console.log("Update 2 Done");
-    });
+//     resp3.then(() => {
+//       console.log("Update 2 Done");
+//     });
 
-    resp3.catch((err) => {
-      console.log(err);
-    });
-  });
+//     resp3.catch((err) => {
+//       console.log(err);
+//     });
+//   });
 
-  resp2.catch((err) => {
-    console.log(err);
-  });
-});
+//   resp2.catch((err) => {
+//     console.log(err);
+//   });
+// });
 
-resp1.catch((err) => {
-  console.log(err);
-});
+// resp1.catch((err) => {
+//   console.log(err);
+// });
+
+//! ASYNC AND AWAIT (BEST PRACTICE)
+
+async function fsOperations() {
+  try {
+    await fsp.writeFile("./employee.txt", "Enter Employees");
+    console.log("File Created");
+    await fsp.appendFile("./employee.txt", "\nJohn Doe");
+    console.log("File Updated 1 time");
+    await fsp.appendFile("./employee.txt", "\nJane Doe");
+    console.log("File Updated 2 time");
+  } catch (error) {
+    console.log("Something went worng", error);
+  }
+}
+
+fsOperations();
