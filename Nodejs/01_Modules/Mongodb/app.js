@@ -43,8 +43,8 @@ async function connectDB() {
   //   console.log(resp);
 
   //! DELETE ALL USERS -> deleteMany({})
-  let resp = await collection.deleteMany({});
-  console.log(resp);
+  // let resp = await collection.deleteMany({});
+  // console.log(resp);
 }
 
 connectDB();
