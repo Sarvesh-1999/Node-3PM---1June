@@ -27,7 +27,7 @@ async function connectDB() {
   //   let user = await collection.findOne({ fname: "John" });
   //   console.log(user);
 
-  //! GET ALL USERS -> findMany({})
+  //! GET ALL USERS -> find({})
   //   let users = await collection.find({}).toArray();
   //   console.log(users);
 
