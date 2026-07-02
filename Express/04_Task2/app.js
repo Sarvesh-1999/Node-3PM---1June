@@ -70,6 +70,73 @@ app.post("/add-book", (req, res) => {
   });
 });
 
+//! EDIT A BOOK
+app.put("/edit-book/:id", (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({
+      message: "all fields are required",
+    });
+  }
+
+  try {
+    let { title } = req.body;
+    const bookID = parseInt(req.params.id);
+
+    const bookToBeEdited = Books.find((ele) => ele.id === bookID);
+    bookToBeEdited.title = title;
+
+    res.status(200).json({
+      message: "book updated",
+      data: bookToBeEdited,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "unable to edit book",
+      error,
+    });
+  }
+});
+
+//! DELETE A BOOK
+app.delete("/delete-book/:id", (req, res) => {
+  try {
+    const bookID = parseInt(req.params.id);
+    const index = Books.findIndex((ele) => ele.id === bookID);
+
+    if (index === -1) {
+      return res.status(404).json({
+        message: "book not found",
+      });
+    }
+
+    Books.splice(index, 1);
+    res.status(200).json({
+      message: "Book deleted",
+      data: Books,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Unable to delete",
+    });
+  }
+});
+
+//! DELETE ALL BOOKS
+app.delete("/delete-all", (req, res) => {
+  try {
+    Books.splice(0, Books.length);
+    res.status(200).json({
+      message: "deleted all books",
+      data: Books,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "unable to delete all books",
+      error,
+    });
+  }
+});
+
 app.listen(PORT, (err) => {
   if (err) {
     console.log("Unable to start server at", PORT);
