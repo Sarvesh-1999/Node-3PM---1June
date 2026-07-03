@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./src/config/db.js";
 import bookRoutes from "./src/routes/book-routes.js";
 
@@ -9,6 +10,11 @@ const PORT = 9000;
 connectDB();
 
 //! middleware
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
 app.use(express.json());
 
 //! routes
