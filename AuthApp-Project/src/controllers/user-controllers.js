@@ -1,5 +1,7 @@
 import { User } from "../models/user-model.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { verify } from "../config/verify-mail.js";
 
 export async function register(req, res) {
   try {
@@ -29,10 +31,19 @@ export async function register(req, res) {
       password: hashedPassword,
     });
 
+    //! GENERATING TOKEN
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "10m",
+    });
+
+    //! VERIFYING EMAIL
+    verify(token, email);
+
     res.status(201).json({
       success: true,
       message: "User created",
       data: newUser,
+      token,
     });
   } catch (error) {
     res.status(500).json({
@@ -45,6 +56,56 @@ export async function register(req, res) {
 
 export async function verifyEmail(req, res) {
   try {
+    const authHeaders = req.headers.authorization;
+
+    if (!authHeaders) {
+      return res.status(400).json({
+        success: false,
+        message: "Token is missing",
+      });
+    }
+
+    const token = authHeaders.split(" ")[1];
+    console.log(token);
+
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(decoded); // { id: '6a50948fd679fc30a09eda39', iat: 1783665807, exp: 1783666407 }
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        return res.status(400).json({
+          success: false,
+          message: "Token Expired",
+        });
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: "Token verification failed",
+        error,
+      });
+    }
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.isVerified = true;
+    user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+
+    
   } catch (error) {
     res.status(500).json({
       success: false,
