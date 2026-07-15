@@ -58,6 +58,8 @@ export async function register(req, res) {
 export async function verifyEmail(req, res) {
   try {
     const authHeaders = req.headers.authorization;
+    console.log(req.headers.authorization);
+    
 
     if (!authHeaders) {
       return res.status(400).json({
